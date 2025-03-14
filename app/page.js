@@ -1,103 +1,112 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import React, { useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import Eyes from './components/Eyes'
+import Image from 'next/image'
+import hand from '../public/hand.svg'
+
+const Page = () => {
+  const subtitleRef = useRef(null)
+  const headingRef = useRef(null)
+  const descriptionRef = useRef(null)
+  const titleContainerRef = useRef(null)
+  const handContainerRef = useRef(null)
+  
+  useEffect(() => {
+    const textAnimations = gsap.timeline()
+    
+    textAnimations.fromTo(
+      descriptionRef.current,
+      { y: 100, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }
+    )
+    
+    //Used "+=0" to ensure next animation starts EXACTLY when previous one ends
+    textAnimations.fromTo(
+      headingRef.current,
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' },
+      "+=0" // Force exact timing with no delay
+    )
+    
+    textAnimations.fromTo(
+      subtitleRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.7, ease: 'power2.out' },
+      "+=0" // Force exact timing with no delay
+    )
+    
+    textAnimations.add(() => {
+      const bounceTl = gsap.timeline({
+        repeat: -1, // Infinite repeat
+        repeatDelay: 2, // Longer pause between each full cycle
+      })
+      
+      bounceTl.to(
+        [titleContainerRef.current, handContainerRef.current], 
+        { 
+          y: -20, // Slightly less movement for subtlety
+          duration: 1.2, // Much slower upward movement
+          ease: "power2.out" // Smoother upward motion
+        }
+      )
+      
+      bounceTl.to(
+        [titleContainerRef.current, handContainerRef.current], 
+        { 
+          y: 0, 
+          duration: 1.8, // Much slower downward movement with spring
+          ease: "elastic.out(1, 0.3)" // Gentler springiness
+        }
+      )
+      
+      return bounceTl
+    })
+    
+  }, [])
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+    <div className='w-full h-screen pt-14 bg-[#fffdf6] flex flex-col items-center gap-7'>
+      <div className='eyes-container'>
+        <Eyes/>
+      </div>
+      <div 
+        ref={titleContainerRef}
+        className='title-text flex flex-col items-center justify-center w-2/4 gap-7'
+      >
+        <p 
+          ref={subtitleRef} 
+          className='text-[#B1AEAE] text-[11px] text-center opacity-0'
+        >
+          BRINGING YOUR VISION TO LIFE
+        </p>
+        <h1 
+          ref={headingRef}
+          className='text-[#181818] text-6xl text-center font-extrabold opacity-0'
+        >
+          Crafting great digital experiences
+        </h1>
+        <p 
+          ref={descriptionRef}
+          className='w-[70%] text-[#181818] text-xl text-center font-medium opacity-0'
+        >
+          Freelance digital designer specializing in web design and Webflow development
+        </p>
+      </div>
+      <div 
+        ref={handContainerRef}
+        className='hand-container self-end -mt-8'
+      >
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+          src={hand}
+          alt='hand'
+          height={502}
+          width={1250}
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
-  );
+  )
 }
+
+export default Page
