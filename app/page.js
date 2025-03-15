@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import Eyes from './components/Eyes'
 import Image from 'next/image'
 import hand from '../public/hand.svg'
+import RotatingWheel from './components/Wheel'
 
 const Page = () => {
   const subtitleRef = useRef(null)
@@ -14,6 +15,8 @@ const Page = () => {
   const handContainerRef = useRef(null)
   
   useEffect(() => {
+    const masterTimeline = gsap.timeline()
+    
     const textAnimations = gsap.timeline()
     
     textAnimations.fromTo(
@@ -22,7 +25,6 @@ const Page = () => {
       { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }
     )
     
-    //Used "+=0" to ensure next animation starts EXACTLY when previous one ends
     textAnimations.fromTo(
       headingRef.current,
       { y: 40, opacity: 0 },
@@ -33,37 +35,105 @@ const Page = () => {
     textAnimations.fromTo(
       subtitleRef.current,
       { opacity: 0 },
-      { opacity: 1, duration: 0.7, ease: 'power2.out' },
+      { opacity: 1, duration: 0.7, ease: 'power3.out' },
       "+=0" // Force exact timing with no delay
     )
     
-    textAnimations.add(() => {
-      const bounceTl = gsap.timeline({
-        repeat: -1, // Infinite repeat
-        repeatDelay: 2, // Longer pause between each full cycle
-      })
-      
-      bounceTl.to(
-        [titleContainerRef.current, handContainerRef.current], 
-        { 
-          y: -20, // Slightly less movement for subtlety
-          duration: 1.2, // Much slower upward movement
-          ease: "power2.out" // Smoother upward motion
-        }
-      )
-      
-      bounceTl.to(
-        [titleContainerRef.current, handContainerRef.current], 
-        { 
-          y: 0, 
-          duration: 1.8, // Much slower downward movement with spring
-          ease: "elastic.out(1, 0.3)" // Gentler springiness
-        }
-      )
-      
-      return bounceTl
-    })
+    masterTimeline.add(textAnimations)
     
+    masterTimeline.to(
+      [titleContainerRef.current, handContainerRef.current],
+      {
+        y: 20, 
+        duration: 2.5, 
+        ease: "power3.out", 
+        delay: 0.3 
+      },
+      "+=0" // Start immediately after text animations
+    )
+    
+    const createBounceAnimation = (element, baseDelay, amplitude) => {
+      const tl = gsap.timeline({
+        repeat: -1,
+        delay: baseDelay
+      });
+      
+      tl.to(element, {
+        y: -amplitude, 
+        duration: 2.5,
+        ease: "power2.out" 
+      });
+      
+      tl.to(element, {
+        y: amplitude * 0.5, 
+        duration: 2.5,
+        ease: "bounce.out" 
+      });
+      
+      tl.to(element, {
+        y: 0, 
+        duration: 2.5,
+        ease: "power1.inOut" 
+      });
+      
+      tl.to(element, {
+        y: 0, 
+        duration: 2.5,
+        ease: "none" // No movement
+      });
+    };
+    
+    createBounceAnimation(subtitleRef.current, 1.0, 8); 
+    createBounceAnimation(headingRef.current, 1.2, 12); 
+    createBounceAnimation(descriptionRef.current, 1.4, 10); 
+    
+    const cycleTimeline = gsap.timeline({
+      repeat: -1,
+      repeatDelay: 0.5 
+    });
+
+    cycleTimeline.to(
+      [titleContainerRef.current, handContainerRef.current],
+      {
+        y: 20, 
+        duration: 2,
+        ease: "none" 
+      }
+    );
+
+    cycleTimeline.to(
+      [titleContainerRef.current, handContainerRef.current],
+      {
+        y: -20, 
+        duration: 2.5, 
+        ease: "power2.inOut" 
+      }
+    );
+
+    cycleTimeline.to(
+      [titleContainerRef.current, handContainerRef.current],
+      {
+        y: -20, 
+        duration: 1.5, 
+        ease: "none" 
+      }
+    );
+
+    cycleTimeline.to(
+      [titleContainerRef.current, handContainerRef.current],
+      {
+        y: 20, 
+        duration: 2.5,
+        ease: "power2.inOut"
+      }
+    );
+
+
+    masterTimeline.add(cycleTimeline, "+=0.5");
+
+    return () => {
+      masterTimeline.kill()
+    }
   }, [])
   
   return (
@@ -105,6 +175,7 @@ const Page = () => {
           width={1250}
         />
       </div>
+      <RotatingWheel/>
     </div>
   )
 }
