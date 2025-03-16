@@ -4,8 +4,8 @@ import React, { useEffect, useState, useRef } from "react";
 import gsap from "gsap";
 
 const Eye = ({ className }) => {
-  const eyeRef = useRef(null); // Reference for the eye container
-  const pupilRef = useRef(null); // Reference for the pupil
+  const eyeRef = useRef(null);
+  const pupilRef = useRef(null);
   const [blinking, setBlinking] = useState(false);
 
   useEffect(() => {

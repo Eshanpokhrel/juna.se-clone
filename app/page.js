@@ -6,6 +6,9 @@ import Eyes from './components/Eyes'
 import Image from 'next/image'
 import hand from '../public/hand.svg'
 import RotatingWheel from './components/Wheel'
+import CarouselComponent from './components/Carousel'
+import ProjectCard from './components/ProjectCard'
+import image from "../public/project.webp"
 
 const Page = () => {
   const subtitleRef = useRef(null)
@@ -137,7 +140,7 @@ const Page = () => {
   }, [])
   
   return (
-    <div className='w-full h-screen pt-14 bg-[#fffdf6] flex flex-col items-center gap-7'>
+    <div className='w-full h-full pt-14 bg-[#fffdf6] flex flex-col items-center gap-7'>
       <div className='eyes-container'>
         <Eyes/>
       </div>
@@ -176,6 +179,37 @@ const Page = () => {
         />
       </div>
       <RotatingWheel/>
+      <div className='service-container p-14 w-screen h-auto flex flex-col justify-center items-start bg-[#fffdf6] gap-10'>
+        <span className=' p-2.5 text-[#B1AEAE] text-[14px]'>What I do best</span>
+        <h1 className='-mt-8 text-[#181818] text-6xl'><strong>Services</strong></h1>
+        <CarouselComponent/>
+      </div>
+      <div className='project-container p-14 w-full h-auto flex flex-col justify-center items-start bg-[#fffdf6] gap-10'>
+        <span className=' p-2.5 text-[#B1AEAE] text-[14px]'>Made with love</span>
+        <h1 className='-mt-8 text-[#181818] text-6xl'><strong>Projects</strong></h1>
+        <div className='grid grid-cols-2 grid-rows-2 gap-8'>
+          <ProjectCard
+            title="Gyld Agency"
+            spans={["WEBFLOW", "UI"]}
+            image={image}
+            />
+          <ProjectCard
+            title="Gyld Agency"
+            spans={["UI"]}
+            image={image}
+            />
+          <ProjectCard
+            title="Gyld Agency"
+            spans={["WEBFLOW"]}
+            image={image}
+            />
+          <ProjectCard
+            title="Gyld Agency"
+            spans={["WEBFLOW", "UI"]}
+            image={image}
+            />
+        </div>
+      </div>
     </div>
   )
 }
